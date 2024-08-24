@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// Ensure the backend URL is defined, defaulting to localhost if not set in the environment variables
+const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 const initialState = {
   name: "",
   email: "",
@@ -14,7 +17,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/register`,
+        `${backendUrl}/api/auth/register`, // Make sure the path matches your backend route
         userData
       );
       localStorage.setItem("token", response.data.token);
@@ -32,7 +35,7 @@ export const googleLogin = createAsyncThunk(
   async ({ code }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/google-login`,
+        `${backendUrl}/api/auth/google-login`, // Make sure this matches your backend route
         { code }
       );
       localStorage.setItem("token", response.data.token);
@@ -45,8 +48,8 @@ export const googleLogin = createAsyncThunk(
   }
 );
 
-const signupSlice = createSlice({
-  name: "signup",
+const authSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
     setName: (state, action) => {
@@ -101,5 +104,5 @@ export const {
   setRememberMe,
   resetForm,
   setFeedbackMessage,
-} = signupSlice.actions;
-export default signupSlice.reducer;
+} = authSlice.actions;
+export default authSlice.reducer;
